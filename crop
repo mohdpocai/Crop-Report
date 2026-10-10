@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>LP2 Estate Daily Productivity Report</title>
+<style>
+:root {
+  box-sizing: border-box;
+  --bg: #f3f6f3;
+  --fg: #1d2b22;
+  --pn: #ffffff;
+  --bd: #cfd9d1;
+  --primary: #1e7a3c;
+}
+
+* { box-sizing: border-box; touch-action: manipulation; }
+
+body {
+  margin: 0;
+  padding: 12px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--pn);
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  padding: 16px;
+  color: #1d2b22;
+}
+
+.panel h3 {
+  margin: 16px 0 10px;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+  border-bottom: 1px dashed var(--bd);
+  padding-bottom: 4px;
+}
+.panel h3:first-of-type { margin-top: 0; }
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+label {
+  font-size: 12px;
+  display: block;
+  opacity: 0.85;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #1d2b22;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1d2b22;
+  font-size: 16px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+button.btn-main {
+  width: 100%;
+  margin-top: 16px;
+  padding: 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#cardbox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#card {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(#cfe6f5, #eaf5e6 50%, #c9e3b8);
+  color: #12301f;
+}
+
+.hd {
+  background: #1b5e30;
+  color: #fff;
+  border-radius: 16px;
+  text-align: center;
+  padding: 12px 8px;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.dt {
+  display: inline-block;
+  margin-top: 6px;
+  background: #f6c935;
+  color: #1b3a1f;
+  border-radius: 12px;
+  padding: 4px 14px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sum {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  background: #f1faf1;
+  border: 1px solid #9cc9a4;
+  border-radius: 12px;
+  margin: 12px 0;
+  padding: 8px 2px;
+  text-align: center;
+}
+.sum small { display: block; font-size: 9px; font-weight: 700; }
+.sum b { font-size: 16px; display: block; }
+.sum i { font-size: 8px; font-style: normal; }
+
+.gs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.g {
+  border: 2px solid var(--c);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+  font-size: 11px;
+}
+.g h4 {
+  margin: 0;
+  background: var(--c);
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+.g div {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+}
+.g div b { font-size: 12px; }
+
+.rain {
+  margin-top: 10px;
+  background: #d5e9f8;
+  border: 2px solid #4a90c9;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.rain h4 { margin: 0 0 4px; color: #1d5f94; font-size: 14px; }
+.rain div { display: flex; gap: 24px; }
+.rain b { font-size: 18px; }
+.rain small { display: block; font-size: 10px; font-weight: 700; }
+
+.ft {
+  text-align: center;
+  font-style: italic;
+  font-size: 12px;
+  margin-top: 10px;
+  color: #1b5e30;
+  font-weight: 600;
+}
+
+#out {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 99;
+  overflow: auto;
+  padding: 24px 16px;
+  text-align: center;
+  color: #fff;
+}
+#out img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="panel" id="form"></div>
+  <div id="cardbox">
+    <div id="card"></div>
+  </div>
+</div>
+
+<div id="out" onclick="this.style.display='none'">
+  <p>💡 Press &amp; hold the image to save or share it.<br><small>(Tap anywhere to close)</small></p>
+  <img id="img" alt="Report">
+</div>
+
+<script>
+const GANGS = [["Masdar", "#2e8b3d"], ["Albert", "#1f6fc4"], ["Arif", "#e8791e"], ["Basman", "#7a3fa8"]];
+const pad = n => String(n).padStart(2, "0");
+const today = () => { const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+
+const F = [
+  ["Outturn", "text", "text"],
+  ["Yield/mdy", "number", "decimal"],
+  ["Unripe %", "number", "decimal"],
+  ["Interval (days)", "number", "numeric"],
+  ["Backlog (mt)", "text", "text"]
+];
+
+const TF = [
+  ["ha", "Total hectares", "numeric"],
+  ["est", "Estimated crop (MT)", "decimal"],
+  ["tdyCrop", "Today crop (mt)", "decimal"],
+  ["tdtCrop", "To-date crop (mt)", "decimal"],
+  ["rainTdy", "Rain today (mm)", "decimal"],
+  ["rainTdt", "Rain to-date (mm)", "decimal"]
+];
+
+let ha0 = "1070";
+try { ha0 = localStorage.getItem("lp2ha") || ha0; } catch (e) {}
+
+const blank = d => ({
+  date: d,
+  ha: ha0,
+  est: "",
+  tdyCrop: "",
+  tdtCrop: "",
+  rainTdy: "",
+  rainTdt: "",
+  g: GANGS.map(() => ["", "", "", "", ""])
+});
+
+let cur = today(), s = blank(cur);
+
+let h = '<h3>Date</h3><div class="field"><input type="date" data-k="date"></div>';
+
+h += '<h3>Summary & Rainfall</h3><div class="row">';
+TF.forEach(([k, l, im]) => {
+  h += `<div class="field"><label>${l}</label><input type="number" step="any" inputmode="${im}" data-k="${k}"></div>`;
+});
+h += '</div>';
+
+GANGS.forEach(([n], i) => {
+  h += `<h3>Gang ${n}</h3><div class="row">`;
+  F.forEach(([l, t, im], j) => {
+    h += `<div class="field"><label>${l}</label><input type="${t}" ${t === "number" ? 'step="any"' : ''} inputmode="${im}" data-g="${i}" data-f="${j}"></div>`;
+  });
+  h += '</div>';
+});
+
+h += '<button class="btn-main" id="dl">Generate Image Report</button>';
+document.getElementById("form").innerHTML = h;
+
+function fill() {
+  document.querySelectorAll("#form input").forEach(i => {
+    if (document.activeElement === i) return;
+    i.value = i.dataset.k ? (i.dataset.k === "date" ? cur : s[i.dataset.k]) : s.g[i.dataset.g][i.dataset.f];
+  });
+}
+
+const u = (x, suf) => (x === "" || x == null ? "—" : x + suf);
+
+function render() {
+  const ha = parseFloat(s.ha), y = c => { const r = parseFloat(c) / ha; return isFinite(r) ? r.toFixed(2) : "—"; };
+  const [Y, M, D] = cur.split("-");
+  const ds = `${+D}/${+M}/${Y}`;
+
+  let g = "";
+  GANGS.forEach(([n, c], i) => {
+    const r = s.g[i];
+    g += `<div class="g" style="--c:${c}">
+      <h4>Gang ${n}</h4>
+      <div>Outturn<b>${u(r[0], "")}</b></div>
+      <div>Yield/mdy<b>${u(r[1], " mt")}</b></div>
+      <div>Unripe %<b>${u(r[2], "%")}</b></div>
+      <div>Interval<b>${u(r[3], " d")}</b></div>
+      <div>Backlog<b>${r[4] === "" ? "Nil" : (isNaN(r[4]) ? r[4] : r[4] + " mt")}</b></div>
+    </div>`;
+  });
+
+  document.getElementById("card").innerHTML = `
+    <div class="hd">LP2 ESTATE<br>DAILY PRODUCTIVITY REPORT<br><span class="dt">Date : ${ds}</span></div>
+    <div class="sum">
+      <div><small>Yield tdy</small><b>${y(s.tdyCrop)}</b><i>mt/Ha</i></div>
+      <div><small>Yield tdt</small><b>${y(s.tdtCrop)}</b><i>mt/Ha</i></div>
+      <div><small>Est. crop</small><b>${u(s.est, "")}</b><i>MT</i></div>
+      <div><small>Tdy crop</small><b>${u(s.tdyCrop, "")}</b><i>mt</i></div>
+      <div><small>Tdt crop</small><b>${u(s.tdtCrop, "")}</b><i>mt</i></div>
+    </div>
+    <div class="gs">${g}</div>
+    <div class="rain">
+      <h4>Rainfall</h4>
+      <div>
+        <span><small>Tdy</small><b>${u(s.rainTdy, " mm")}</b></span>
+        <span><small>Tdt</small><b>${u(s.rainTdt, " mm")}</b></span>
+      </div>
+    </div>
+    <div class="ft">Together for a Higher Productivity</div>
+  `;
+}
+
+const KEY = d => "lp2_" + d;
+function save() { try { localStorage.setItem(KEY(cur), JSON.stringify(s)); } catch (e) {} }
+
+function sub() {
+  s = blank(cur);
+  try {
+    const t = localStorage.getItem(KEY(cur));
+    if (t) s = Object.assign(s, JSON.parse(t));
+  } catch (e) {}
+  fill();
+  render();
+}
+
+document.getElementById("form").addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.k === "date") {
+    cur = t.value || today();
+    sub();
+    return;
+  }
+  const v = t.value;
+  if (t.dataset.k) {
+    const k = t.dataset.k;
+    s[k] = v;
+    if (k === "ha") {
+      ha0 = v;
+      try { localStorage.setItem("lp2ha", v); } catch (x) {}
+    }
+  } else {
+    s.g[t.dataset.g][t.dataset.f] = v;
+  }
+  render();
+  save();
+});
+
+function show(src) {
+  document.getElementById("img").src = src;
+  document.getElementById("out").style.display = "block";
+}
+
+document.getElementById("dl").onclick = () => {
+  const card = document.getElementById("card");
+  const w = card.offsetWidth;
+  const h = card.offsetHeight;
+  const css = document.querySelector("style").textContent;
+  const x = new XMLSerializer().serializeToString(card);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><foreignObject width="100%" height="100%"><style>${css}</style>${x}</foreignObject></svg>`;
+  const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  
+  const im = new Image();
+  im.onload = () => {
+    try {
+      const c = document.createElement("canvas");
+      const scale = 3;
+      c.width = w * scale;
+      c.height = h * scale;
+      const k = c.getContext("2d");
+      k.scale(scale, scale);
+      k.drawImage(im, 0, 0);
+
+      c.toBlob(b => {
+        if (!b) { show(url); return; }
+        show(URL.createObjectURL(b));
+      }, "image/png");
+    } catch (e) {
+      show(url);
+    }
+  };
+  im.onerror = () => alert("Could not generate image card. You can take a screenshot instead.");
+  im.src = url;
+};
+
+sub();
+</script>
+</body>
+</html>
